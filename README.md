@@ -13,3 +13,27 @@ Aplikace nabízí grafické rozhraní pro interaktivní experimentování s růz
 2. Instalace závislostí:
 ```bash
 pip install opencv-python numpy pillow matplotlib scikit-image
+
+Použití
+Spuštění hlavního programu:
+
+bash
+Copy
+python threshold.py
+Klíčové funkce
+Načítání/ukládání obrázků (PNG, JPG, BMP)
+
+Undo/Redo operací
+
+Zobrazení histogramu
+
+Tři režimy prahování s nastavitelnými parametry
+
+Vizualizace výsledků v reálném čase
+
+Doporučené použití
+Pro čisté dokumenty: Klasická Otsu (rychlá)
+
+Pro historické dokumenty: Recursive Otsu (nejpřesnější)
+
+Pro nerovnoměrné osvětlení: Sauvola (adaptivní)
