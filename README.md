@@ -13,13 +13,14 @@ Aplikace nabízí grafické rozhraní pro interaktivní experimentování s růz
 2. Instalace závislostí:
 ```bash
 pip install opencv-python numpy pillow matplotlib scikit-image
+```
 
 Použití
 Spuštění hlavního programu:
 
-bash
-Copy
+```bash
 python threshold.py
+```
 Klíčové funkce
 Načítání/ukládání obrázků (PNG, JPG, BMP)
 
