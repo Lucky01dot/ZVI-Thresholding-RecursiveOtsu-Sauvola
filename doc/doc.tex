@@ -72,6 +72,31 @@ Kde:
 \item $t$ je testovaný práh
 \end{itemize}
 
+\subsection{Recursive Otsu metoda}
+Rozšíření klasické Otsuovy metody \cite{nina2010recursive} řešící problémy s:
+
+\begin{itemize}
+\item Slabými tahy písma (faint strokes)
+\item Prosakováním z druhé strany (bleed-through)
+\item Nerovnoměrným osvětlením (non-uniform illumination)
+\end{itemize}
+
+Algoritmus pracuje v těchto krocích:
+
+\begin{enumerate}
+\item Odhad pozadí pomocí medianového filtru (velikost okna 21×21)
+\item Odstranění pozadí subtrakcí
+\item Bilateralní filtrace pro redukci šumu ($\sigma_s=10$, $\sigma_r=2$)
+\item Rekurzivní prahování:
+\begin{equation}
+T_k = \text{Otsu}(T_{k-1}, 255) \quad \text{s kritérii zastavení } d_1=2, d_2=26
+\end{equation}
+\item Selektivní bilateralní filtrace (odlišné parametry pro text a pozadí)
+\item Prahování s hysterezí
+\end{enumerate}
+
+Klíčovou inovací je rekurzivní aplikace Otsuovy metody na postupně se zužující intenzitní rozsah, což umožňuje zac
+
 \subsection{Sauvolova metoda}
 Adaptivní metoda vyvinutá Sauvolou a Pietikäinenem počítá lokální práh podle vzorce:
 
@@ -127,6 +152,29 @@ def sauvola(image, window=15, k=0.2, R=128):
     return result
 \end{verbatim}
 
+\subsubsection{Rekurzivní Otsu}
+\begin{verbatim}
+def recursive_otsu(image, levels=3, d1=2, d2=26):
+    thresholds = []
+    prev_thresh = 0
+    for _ in range(levels):
+        current_image = image if not thresholds else image[image >= prev_thresh]
+        thresh = otsu_threshold(current_image)
+        if thresholds and (thresh-prev_thresh < d1 or thresh-prev_thresh > d2):
+            break
+        thresholds.append(thresh)
+        prev_thresh = thresh
+    return thresholds
+\end{verbatim}
+
+\subsubsection{Selektivní bilateralní filtrace}
+\begin{verbatim}
+def selective_bilateral_filter(image, mask):
+    fg = cv2.bilateralFilter(image, -1, 2, 2)  # Konzervativní pro text
+    bg = cv2.bilateralFilter(image, -1, 10, 3) # Agresivnější pro pozadí
+    return np.where(mask > 0, fg, bg)
+\end{verbatim}
+
 \section{Výsledky}
 
 
@@ -138,6 +186,7 @@ def sauvola(image, window=15, k=0.2, R=128):
 Metoda & Výhody & Nevýhody \\
 \hline
 Otsu & Rychlá, dobrá pro bimodální histogram & Špatně pracuje s nerovnoměrným osvětlením \\
+Recursive Otsu & Zachycuje slabé tahy, robustní k degradaci & Náročnější na výpočet \\
 Sauvola & Adaptivní k místním podmínkám & Pomalá výpočetně náročná \\
 \hline
 \end{tabular}
@@ -264,6 +313,7 @@ Možná vylepšení:
 \item Otsu, N. (1979). A Threshold Selection Method from Gray-Level Histograms
 \item Sauvola, J. (2000). Adaptive Document Image Binarization
 \item Gonzalez, R. C. (2008). Digital Image Processing
+\item Nina, O., Morse, B., Barrett, W. (2010). \textit{A Recursive Otsu Thresholding Method for Scanned Document Binarization}. Brigham Young University.
 \end{enumerate}
 
 \end{document}
