@@ -21,20 +21,14 @@ Spuštění hlavního programu:
 ```bash
 python threshold.py
 ```
-Klíčové funkce
-Načítání/ukládání obrázků (PNG, JPG, BMP)
+## Klíčové funkce
+- Načítání/ukládání obrázků (PNG, JPG, BMP)
+- Undo/Redo operací
+- Zobrazení histogramu
+- Tři režimy prahování s nastavitelnými parametry
+- Vizualizace výsledků v reálném čase
 
-Undo/Redo operací
-
-Zobrazení histogramu
-
-Tři režimy prahování s nastavitelnými parametry
-
-Vizualizace výsledků v reálném čase
-
-Doporučené použití
-Pro čisté dokumenty: Klasická Otsu (rychlá)
-
-Pro historické dokumenty: Recursive Otsu (nejpřesnější)
-
-Pro nerovnoměrné osvětlení: Sauvola (adaptivní)
+## Doporučené použití
+- Pro čisté dokumenty: Klasická Otsu (rychlá)
+- Pro historické dokumenty: Recursive Otsu (nejpřesnější)
+- Pro nerovnoměrné osvětlení: Sauvola (adaptivní)
