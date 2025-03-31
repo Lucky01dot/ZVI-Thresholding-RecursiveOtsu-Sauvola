@@ -19,7 +19,7 @@ Použití
 Spuštění hlavního programu:
 
 ```bash
-python threshold.py
+python thresholding.py
 ```
 ## Klíčové funkce
 - Načítání/ukládání obrázků (PNG, JPG, BMP)
