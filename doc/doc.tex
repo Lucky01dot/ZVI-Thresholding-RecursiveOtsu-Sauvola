@@ -154,26 +154,33 @@ def sauvola(image, window=15, k=0.2, R=128):
 
 \subsubsection{Rekurzivní Otsu}
 \begin{verbatim}
-def recursive_otsu(image, levels=3, d1=2, d2=26):
-    thresholds = []
-    prev_thresh = 0
-    for _ in range(levels):
-        current_image = image if not thresholds else image[image >= prev_thresh]
-        thresh = otsu_threshold(current_image)
-        if thresholds and (thresh-prev_thresh < d1 or thresh-prev_thresh > d2):
-            break
-        thresholds.append(thresh)
-        prev_thresh = thresh
-    return thresholds
+def otsu_recursive_otsu_gui(img_gray, bg_est_window=21, bilateral_r=2, bilateral_s=10,
+                            d1=2, d2=26, bg_bilateral_r=3, bg_bilateral_s=10,
+                            text_bilateral_r=2, text_bilateral_s=2):
+    background = cv2.medianBlur(img_gray, bg_est_window)
+    background = cv2.bilateralFilter(background, -1, bg_bilateral_r, bg_bilateral_s)
+
+    no_bg = cv2.subtract(background, img_gray)
+
+    filtered = cv2.bilateralFilter(no_bg, -1, bilateral_r, bilateral_s)
+    enhanced = cv2.bilateralFilter(filtered, -1, text_bilateral_r, text_bilateral_s)
+
+    thresholds = recursive_otsu(enhanced, levels=3, min_val=d1, max_val=d2)
+
+    if thresholds:
+        best_thresh = thresholds[len(thresholds)//2]
+    else:
+        best_thresh = otsu_threshold(enhanced)
+
+    _, binary_final = cv2.threshold(enhanced, best_thresh, 255, cv2.THRESH_BINARY)
+
+
+    binary_final = cv2.bitwise_not(binary_final)
+
+    return binary_final
 \end{verbatim}
 
-\subsubsection{Selektivní bilateralní filtrace}
-\begin{verbatim}
-def selective_bilateral_filter(image, mask):
-    fg = cv2.bilateralFilter(image, -1, 2, 2)  # Konzervativní pro text
-    bg = cv2.bilateralFilter(image, -1, 10, 3) # Agresivnější pro pozadí
-    return np.where(mask > 0, fg, bg)
-\end{verbatim}
+
 
 \section{Výsledky}
 
@@ -185,7 +192,6 @@ def selective_bilateral_filter(image, mask):
 \hline
 Metoda & Výhody & Nevýhody \\
 \hline
-Otsu & Rychlá, dobrá pro bimodální histogram & Špatně pracuje s nerovnoměrným osvětlením \\
 Recursive Otsu & Zachycuje slabé tahy, robustní k degradaci & Náročnější na výpočet \\
 Sauvola & Adaptivní k místním podmínkám & Pomalá výpočetně náročná \\
 \hline
