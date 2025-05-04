@@ -6,6 +6,20 @@
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage[margin=2cm]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{subcaption}
+
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    language=Python,
+    columns=flexible
+}
 
 \title{Semestrální práce: Automatické prahování obrazu \\ Metody Otsu a Sauvola}
 \author{Jan Čácha}
@@ -122,7 +136,7 @@ Parametry:
 \subsection{Klíčové algoritmy}
 
 \subsubsection{Otsuovo prahování}
-\begin{verbatim}
+\begin{lstlisting}
 def otsu_threshold(image):
     hist = np.histogram(image, bins=256)[0]
     prob = hist / hist.sum()
@@ -135,10 +149,10 @@ def otsu_threshold(image):
         if var > max_var:
             max_var, optimal = var, t
     return optimal
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Sauvolovo prahování}
-\begin{verbatim}
+\begin{lstlisting}
 def sauvola(image, window=15, k=0.2, R=128):
     pad = window//2
     padded = np.pad(image, pad, mode='reflect')
@@ -150,10 +164,10 @@ def sauvola(image, window=15, k=0.2, R=128):
             T = mean*(1 + k*(std/R - 1))
             result[i,j] = 255 if image[i,j] > T else 0
     return result
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Rekurzivní Otsu}
-\begin{verbatim}
+\begin{lstlisting}
 def otsu_recursive_otsu_gui(img_gray, bg_est_window=21, bilateral_r=2, bilateral_s=10,
                             d1=2, d2=26, bg_bilateral_r=3, bg_bilateral_s=10,
                             text_bilateral_r=2, text_bilateral_s=2):
@@ -178,7 +192,7 @@ def otsu_recursive_otsu_gui(img_gray, bg_est_window=21, bilateral_r=2, bilateral
     binary_final = cv2.bitwise_not(binary_final)
 
     return binary_final
-\end{verbatim}
+\end{lstlisting}
 
 
 
@@ -197,13 +211,50 @@ Sauvola & Adaptivní k místním podmínkám & Pomalá výpočetně náročná \
 \hline
 \end{tabular}
 \end{table}
-\newpage
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\textwidth]{otsu.png}
-\caption{Příklad prahování Recursive Otsu}
-\label{fig:vysledky}
+
+\section{Ukázky výsledků}
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{original1.png}
+        \caption{Originál}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{otsu1.png}
+        \caption{Otsu}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{sauvola1.png}
+        \caption{Sauvola}
+    \end{subfigure}
+    \caption{Porovnání metod prahování na vzorku 1}
 \end{figure}
+
+\vspace{0.5cm}
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{original2.png}
+        \caption{Originál}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{otsu2.png}
+        \caption{Otsu}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{sauvola2.png}
+        \caption{Sauvola}
+    \end{subfigure}
+    \caption{Porovnání metod prahování na vzorku 2}
+\end{figure}
+
+
 
 
 \section{Uživatelská příručka}
